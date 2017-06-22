@@ -1,0 +1,28 @@
+{
+  "name": "fast-string-search",
+  "version": "1.0.0",
+  "description": "Fast search substrings in a string by using N-API and boyer-moore-magiclen.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test/mocha --napi-modules --reporter spec",
+    "benchmark": "node test/mocha --napi-modules --reporter spec benchmark"
+  },
+  "keywords": [
+    "nodejs",
+    "stringbuilder",
+    "Boyer-Moore-MagicLen",
+    "string",
+    "search",
+    "string"
+  ],
+  "author": "Magic Len <len@magiclen.org> (https://magiclen.org)",
+  "license": "MIT",
+  "dependencies": {
+    "bindings": "^1.2.1"
+  },
+  "devDependencies": {
+    "chai": "^4.0.2",
+    "mocha": "^3.4.2",
+    "mocha-logger": "^1.0.5"
+  }
+}
