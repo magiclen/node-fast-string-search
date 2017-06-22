@@ -33,7 +33,7 @@ describe('Full Text Search', function() {
     mlog.log(endTime - startTime, 'milliseconds');
   });
 
-  it('Using FSS to search text', function() {
+  it('Use FSS to search text', function() {
     startTime = Date.now();
     var indexArray = fss.indexOf(a, p, 0, 1000000);
     var sum = indexArray.length;
@@ -87,7 +87,7 @@ describe('Normal Text Search', function() {
     mlog.log(endTime - startTime, 'milliseconds');
   });
 
-  it('Using FSS to search text', function() {
+  it('Use FSS to search text', function() {
     startTime = Date.now();
     var indexArray = fss.indexOfSkip(a, p, 0, 500000);
     var sum = indexArray.length;
