@@ -12,10 +12,13 @@ napi_value boyerMooreMagicLen(napi_env env, char16_t* source, int64_t sourceLeng
         if (patternLength == 0 || offset < 0 || sourceLength - offset < patternLength) {
                 return createEmptyArray(env);
         }
+        if(limit <= 0) {
+                limit = 1000;
+        }
 
         uint32_t* buffer;
         napi_value arrayBuffer;
-        napi_create_arraybuffer(env, 4000000, (void**)(&buffer), &arrayBuffer);
+        napi_create_arraybuffer(env, limit * 4, (void**)(&buffer), &arrayBuffer);
 
         int64_t sourceLength_dec = sourceLength - 1;
         int64_t patternLength_dec = patternLength - 1;
@@ -46,7 +49,7 @@ napi_value boyerMooreMagicLen(napi_env env, char16_t* source, int64_t sourceLeng
                 sourcePointer += goodSuffixLength_inc;
                 if (patternPointer < 0) {
                         buffer[resultListLength++] = starePointer + 1;
-                        if (sourcePointer > sourceLength_dec || (limit > 0 && resultListLength == limit) || resultListLength > 1000000) {
+                        if (sourcePointer > sourceLength_dec || resultListLength == limit) {
                                 break;
                         } else {
                                 sourcePointer += badCharShiftMap[source[sourcePointer]];
@@ -69,10 +72,13 @@ napi_value boyerMooreMagicLenSkip(napi_env env, char16_t* source, int64_t source
         if (patternLength == 0 || offset < 0 || sourceLength - offset < patternLength) {
                 return createEmptyArray(env);
         }
+        if(limit <= 0) {
+                limit = 1000;
+        }
 
         uint32_t* buffer;
         napi_value arrayBuffer;
-        napi_create_arraybuffer(env, 4000000, (void**)(&buffer), &arrayBuffer);
+        napi_create_arraybuffer(env, limit * 4, (void**)(&buffer), &arrayBuffer);
 
         int64_t sourceLength_dec = sourceLength - 1;
         int64_t patternLength_dec = patternLength - 1;
@@ -103,7 +109,7 @@ napi_value boyerMooreMagicLenSkip(napi_env env, char16_t* source, int64_t source
                 sourcePointer += goodSuffixLength_inc;
                 if (patternPointer < 0) {
                         buffer[resultListLength++] = starePointer + 1;
-                        if (sourcePointer > sourceLength_dec || (limit > 0 && resultListLength == limit)) {
+                        if (sourcePointer > sourceLength_dec || resultListLength == limit) {
                                 break;
                         } else {
                                 sourcePointer += patternLength_dec;
@@ -126,10 +132,13 @@ napi_value boyerMooreMagicLenRev(napi_env env, char16_t* source, int64_t sourceL
         if (patternLength == 0 || offset < 0 || sourceLength - offset < patternLength) {
                 return createEmptyArray(env);
         }
+        if(limit <= 0) {
+                limit = 1000;
+        }
 
         uint32_t* buffer;
         napi_value arrayBuffer;
-        napi_create_arraybuffer(env, 4000000, (void**)(&buffer), &arrayBuffer);
+        napi_create_arraybuffer(env, limit * 4, (void**)(&buffer), &arrayBuffer);
 
         int64_t sourceLength_dec = sourceLength - 1;
         int64_t patternLength_dec = patternLength - 1;
@@ -161,7 +170,7 @@ napi_value boyerMooreMagicLenRev(napi_env env, char16_t* source, int64_t sourceL
                 sourcePointer -= goodSuffixLength_inc;
                 if (patternPointer >= patternLength) {
                         buffer[resultListLength++] = sourcePointer + 1;
-                        if (sourcePointer < 0 || (limit > 0 && resultListLength == limit)) {
+                        if (sourcePointer < 0 || resultListLength == limit) {
                                 break;
                         } else {
                                 sourcePointer -= badCharShiftMap[source[sourcePointer]];
@@ -286,22 +295,14 @@ napi_value utf16IndexOf(napi_env env, napi_callback_info info){
         napi_get_buffer_info(env, args[0], (void**)(&sourceDataChars), &sourceDataLength);
 
         size_t sourceDataChars16Length = sourceDataLength / 2;
-        char16_t* sourceDataChars16 = (char16_t*)malloc(sizeof(char16_t) * (sourceDataChars16Length + 1));
-        size_t i,j = 0;
-        for(i = 0; i < sourceDataLength; i += 2) {
-                sourceDataChars16[j++] = (char16_t)sourceDataChars[i + 1] << 8 | sourceDataChars[i];
-        }
+        char16_t* sourceDataChars16 = (char16_t*)sourceDataChars;
 
         char* patternDataChars;
         size_t patternDataLength;
         napi_get_buffer_info(env, args[1], (void**)(&patternDataChars), &patternDataLength);
 
         size_t patternDataChars16Length = patternDataLength / 2;
-        char16_t* patternDataChars16 = (char16_t*)malloc(sizeof(char16_t) * (patternDataChars16Length + 1));
-        j = 0;
-        for(i = 0; i < patternDataLength; i += 2) {
-                patternDataChars16[j++] = (char16_t)patternDataChars[i + 1] << 8 | patternDataChars[i];
-        }
+        char16_t* patternDataChars16 = (char16_t*)patternDataChars;
 
         int64_t offset = 0;
         int64_t limit = 0;
@@ -312,8 +313,6 @@ napi_value utf16IndexOf(napi_env env, napi_callback_info info){
                 napi_get_value_int64(env, args[2], &offset);
         }
         napi_value result = boyerMooreMagicLen(env, sourceDataChars16, sourceDataChars16Length, patternDataChars16, patternDataChars16Length, offset, limit);
-        free(sourceDataChars16);
-        free(patternDataChars16);
         return result;
 }
 
@@ -330,22 +329,14 @@ napi_value utf16IndexOfSkip(napi_env env, napi_callback_info info){
         napi_get_buffer_info(env, args[0], (void**)(&sourceDataChars), &sourceDataLength);
 
         size_t sourceDataChars16Length = sourceDataLength / 2;
-        char16_t* sourceDataChars16 = (char16_t*)malloc(sizeof(char16_t) * (sourceDataChars16Length + 1));
-        size_t i,j = 0;
-        for(i = 0; i < sourceDataLength; i += 2) {
-                sourceDataChars16[j++] = (char16_t)sourceDataChars[i + 1] << 8 | sourceDataChars[i];
-        }
+        char16_t* sourceDataChars16 = (char16_t*)sourceDataChars;
 
         char* patternDataChars;
         size_t patternDataLength;
         napi_get_buffer_info(env, args[1], (void**)(&patternDataChars), &patternDataLength);
 
         size_t patternDataChars16Length = patternDataLength / 2;
-        char16_t* patternDataChars16 = (char16_t*)malloc(sizeof(char16_t) * (patternDataChars16Length + 1));
-        j = 0;
-        for(i = 0; i < patternDataLength; i += 2) {
-                patternDataChars16[j++] = (char16_t)patternDataChars[i + 1] << 8 | patternDataChars[i];
-        }
+        char16_t* patternDataChars16 = (char16_t*)patternDataChars;
 
         int64_t offset = 0;
         int64_t limit = 0;
@@ -356,8 +347,6 @@ napi_value utf16IndexOfSkip(napi_env env, napi_callback_info info){
                 napi_get_value_int64(env, args[2], &offset);
         }
         napi_value result = boyerMooreMagicLenSkip(env, sourceDataChars16, sourceDataChars16Length, patternDataChars16, patternDataChars16Length, offset, limit);
-        free(sourceDataChars16);
-        free(patternDataChars16);
         return result;
 }
 
@@ -375,22 +364,14 @@ napi_value utf16LastIndexOf(napi_env env, napi_callback_info info){
         napi_get_buffer_info(env, args[0], (void**)(&sourceDataChars), &sourceDataLength);
 
         size_t sourceDataChars16Length = sourceDataLength / 2;
-        char16_t* sourceDataChars16 = (char16_t*)malloc(sizeof(char16_t) * (sourceDataChars16Length + 1));
-        size_t i,j = 0;
-        for(i = 0; i < sourceDataLength; i += 2) {
-                sourceDataChars16[j++] = (char16_t)sourceDataChars[i + 1] << 8 | sourceDataChars[i];
-        }
+        char16_t* sourceDataChars16 = (char16_t*)sourceDataChars;
 
         char* patternDataChars;
         size_t patternDataLength;
         napi_get_buffer_info(env, args[1], (void**)(&patternDataChars), &patternDataLength);
 
         size_t patternDataChars16Length = patternDataLength / 2;
-        char16_t* patternDataChars16 = (char16_t*)malloc(sizeof(char16_t) * (patternDataChars16Length + 1));
-        j = 0;
-        for(i = 0; i < patternDataLength; i += 2) {
-                patternDataChars16[j++] = (char16_t)patternDataChars[i + 1] << 8 | patternDataChars[i];
-        }
+        char16_t* patternDataChars16 = (char16_t*)patternDataChars;
 
         int64_t offset = 0;
         int64_t limit = 0;
@@ -401,8 +382,6 @@ napi_value utf16LastIndexOf(napi_env env, napi_callback_info info){
                 napi_get_value_int64(env, args[2], &offset);
         }
         napi_value result = boyerMooreMagicLenRev(env, sourceDataChars16, sourceDataChars16Length, patternDataChars16, patternDataChars16Length, offset, limit);
-        free(sourceDataChars16);
-        free(patternDataChars16);
         return result;
 }
 
