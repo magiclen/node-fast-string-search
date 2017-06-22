@@ -21,6 +21,14 @@ describe('#indexOf', function() {
     var result = fss.indexOfSkip('coocoocoocoo', 'oocoo').toString();
     expect(result).to.equal('1,7');
   });
+  it('should find four substrings', function() {
+    var result = fss.indexOf('HERE IS A SIMPLE EXAMPLE, WHICH CONTAINS MULTIPLE EXAMPLES. SIXLEE IS A WRONG WORD. EXAMPLEEXAMPLE', 'EXAMPLE').toString();
+    expect(result).to.equal('17,50,84,91');
+  });
+  it('should find four substrings', function() {
+    var result = fss.indexOfSkip('HERE IS A SIMPLE EXAMPLE, WHICH CONTAINS MULTIPLE EXAMPLES. SIXLEE IS A WRONG WORD. EXAMPLEEXAMPLE', 'EXAMPLE').toString();
+    expect(result).to.equal('17,50,84,91');
+  });
 });
 
 describe('#lastIndexOf', function() {

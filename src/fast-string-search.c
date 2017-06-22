@@ -12,10 +12,14 @@ napi_value boyerMooreMagicLen(napi_env env, char16_t* source, int64_t sourceLeng
         if (patternLength == 0 || offset < 0 || sourceLength - offset < patternLength) {
                 return createEmptyArray(env);
         }
+
+        uint32_t* buffer;
+        napi_value arrayBuffer;
+        napi_create_arraybuffer(env, 4000000, (void**)(&buffer), &arrayBuffer);
+
         int64_t sourceLength_dec = sourceLength - 1;
         int64_t patternLength_dec = patternLength - 1;
         napi_value resultList;
-        napi_create_array(env, &resultList);
         uint32_t resultListLength = 0;
         int64_t badCharShiftMap[65536] = { patternLength };
         int64_t i;
@@ -41,10 +45,8 @@ napi_value boyerMooreMagicLen(napi_env env, char16_t* source, int64_t sourceLeng
                 int64_t goodSuffixLength_inc = patternLength - patternPointer;
                 sourcePointer += goodSuffixLength_inc;
                 if (patternPointer < 0) {
-                        napi_value value;
-                        napi_create_number(env, starePointer + 1, &value);
-                        napi_set_element(env, resultList, resultListLength++, value);
-                        if (sourcePointer > sourceLength_dec || (limit > 0 && resultListLength == limit)) {
+                        buffer[resultListLength++] = starePointer + 1;
+                        if (sourcePointer > sourceLength_dec || (limit > 0 && resultListLength == limit) || resultListLength > 1000000) {
                                 break;
                         } else {
                                 sourcePointer += badCharShiftMap[source[sourcePointer]];
@@ -59,6 +61,7 @@ napi_value boyerMooreMagicLen(napi_env env, char16_t* source, int64_t sourceLeng
                         sourcePointer += (shift1 >= shift2) ? shift1 : shift2;
                 }
         }
+        napi_create_typedarray(env, napi_uint32_array, resultListLength, arrayBuffer, 0, &resultList);
         return resultList;
 }
 
@@ -66,10 +69,14 @@ napi_value boyerMooreMagicLenSkip(napi_env env, char16_t* source, int64_t source
         if (patternLength == 0 || offset < 0 || sourceLength - offset < patternLength) {
                 return createEmptyArray(env);
         }
+
+        uint32_t* buffer;
+        napi_value arrayBuffer;
+        napi_create_arraybuffer(env, 4000000, (void**)(&buffer), &arrayBuffer);
+
         int64_t sourceLength_dec = sourceLength - 1;
         int64_t patternLength_dec = patternLength - 1;
         napi_value resultList;
-        napi_create_array(env, &resultList);
         uint32_t resultListLength = 0;
         int64_t badCharShiftMap[65536] = { patternLength };
         int64_t i;
@@ -95,13 +102,11 @@ napi_value boyerMooreMagicLenSkip(napi_env env, char16_t* source, int64_t source
                 int64_t goodSuffixLength_inc = patternLength - patternPointer;
                 sourcePointer += goodSuffixLength_inc;
                 if (patternPointer < 0) {
-                        napi_value value;
-                        napi_create_number(env, starePointer + 1, &value);
-                        napi_set_element(env, resultList, resultListLength++, value);
+                        buffer[resultListLength++] = starePointer + 1;
                         if (sourcePointer > sourceLength_dec || (limit > 0 && resultListLength == limit)) {
                                 break;
                         } else {
-                                sourcePointer += patternLength;
+                                sourcePointer += patternLength_dec;
                                 continue;
                         }
                 }
@@ -113,6 +118,7 @@ napi_value boyerMooreMagicLenSkip(napi_env env, char16_t* source, int64_t source
                         sourcePointer += (shift1 >= shift2) ? shift1 : shift2;
                 }
         }
+        napi_create_typedarray(env, napi_uint32_array, resultListLength, arrayBuffer, 0, &resultList);
         return resultList;
 }
 
@@ -120,6 +126,11 @@ napi_value boyerMooreMagicLenRev(napi_env env, char16_t* source, int64_t sourceL
         if (patternLength == 0 || offset < 0 || sourceLength - offset < patternLength) {
                 return createEmptyArray(env);
         }
+
+        uint32_t* buffer;
+        napi_value arrayBuffer;
+        napi_create_arraybuffer(env, 4000000, (void**)(&buffer), &arrayBuffer);
+
         int64_t sourceLength_dec = sourceLength - 1;
         int64_t patternLength_dec = patternLength - 1;
         napi_value resultList;
@@ -149,9 +160,7 @@ napi_value boyerMooreMagicLenRev(napi_env env, char16_t* source, int64_t sourceL
                 int64_t goodSuffixLength_inc = patternPointer + 1;
                 sourcePointer -= goodSuffixLength_inc;
                 if (patternPointer >= patternLength) {
-                        napi_value value;
-                        napi_create_number(env, sourcePointer + 1, &value);
-                        napi_set_element(env, resultList, resultListLength++, value);
+                        buffer[resultListLength++] = sourcePointer + 1;
                         if (sourcePointer < 0 || (limit > 0 && resultListLength == limit)) {
                                 break;
                         } else {
@@ -167,6 +176,7 @@ napi_value boyerMooreMagicLenRev(napi_env env, char16_t* source, int64_t sourceL
                         sourcePointer -= (shift1 >= shift2) ? shift1 : shift2;
                 }
         }
+        napi_create_typedarray(env, napi_uint32_array, resultListLength, arrayBuffer, 0, &resultList);
         return resultList;
 }
 
@@ -182,8 +192,8 @@ napi_value indexOf(napi_env env, napi_callback_info info){
         napi_get_value_string_utf16(env, args[0], NULL, 0, &sourceLength);
         napi_get_value_string_utf16(env, args[1], NULL, 0, &patternLength);
 
-        char16_t* source = malloc(sizeof(char16_t) * (sourceLength + 1));
-        char16_t* pattern = malloc(sizeof(char16_t) * (patternLength + 1));
+        char16_t* source = (char16_t*)malloc(sizeof(char16_t) * (sourceLength + 1));
+        char16_t* pattern = (char16_t*)malloc(sizeof(char16_t) * (patternLength + 1));
         napi_get_value_string_utf16(env, args[0], source, sourceLength  + 1, &sourceLength);
         napi_get_value_string_utf16(env, args[1], pattern, patternLength + 1, &patternLength);
 
@@ -213,8 +223,8 @@ napi_value indexOfSkip(napi_env env, napi_callback_info info){
         napi_get_value_string_utf16(env, args[0], NULL, 0, &sourceLength);
         napi_get_value_string_utf16(env, args[1], NULL, 0, &patternLength);
 
-        char16_t* source = malloc(sizeof(char16_t) * (sourceLength + 1));
-        char16_t* pattern = malloc(sizeof(char16_t) * (patternLength + 1));
+        char16_t* source = (char16_t*)malloc(sizeof(char16_t) * (sourceLength + 1));
+        char16_t* pattern = (char16_t*)malloc(sizeof(char16_t) * (patternLength + 1));
         napi_get_value_string_utf16(env, args[0], source, sourceLength  + 1, &sourceLength);
         napi_get_value_string_utf16(env, args[1], pattern, patternLength + 1, &patternLength);
 
@@ -244,8 +254,8 @@ napi_value lastIndexOf(napi_env env, napi_callback_info info){
         napi_get_value_string_utf16(env, args[0], NULL, 0, &sourceLength);
         napi_get_value_string_utf16(env, args[1], NULL, 0, &patternLength);
 
-        char16_t* source = malloc(sizeof(char16_t) * (sourceLength + 1));
-        char16_t* pattern = malloc(sizeof(char16_t) * (patternLength + 1));
+        char16_t* source = (char16_t*)malloc(sizeof(char16_t) * (sourceLength + 1));
+        char16_t* pattern = (char16_t*)malloc(sizeof(char16_t) * (patternLength + 1));
         napi_get_value_string_utf16(env, args[0], source, sourceLength  + 1, &sourceLength);
         napi_get_value_string_utf16(env, args[1], pattern, patternLength + 1, &patternLength);
 
@@ -276,7 +286,7 @@ napi_value utf16IndexOf(napi_env env, napi_callback_info info){
         napi_get_buffer_info(env, args[0], (void**)(&sourceDataChars), &sourceDataLength);
 
         size_t sourceDataChars16Length = sourceDataLength / 2;
-        char16_t* sourceDataChars16 = malloc(sizeof(char16_t) * (sourceDataChars16Length + 1));
+        char16_t* sourceDataChars16 = (char16_t*)malloc(sizeof(char16_t) * (sourceDataChars16Length + 1));
         size_t i,j = 0;
         for(i = 0; i < sourceDataLength; i += 2) {
                 sourceDataChars16[j++] = (char16_t)sourceDataChars[i + 1] << 8 | sourceDataChars[i];
@@ -287,7 +297,7 @@ napi_value utf16IndexOf(napi_env env, napi_callback_info info){
         napi_get_buffer_info(env, args[1], (void**)(&patternDataChars), &patternDataLength);
 
         size_t patternDataChars16Length = patternDataLength / 2;
-        char16_t* patternDataChars16 = malloc(sizeof(char16_t) * (patternDataChars16Length + 1));
+        char16_t* patternDataChars16 = (char16_t*)malloc(sizeof(char16_t) * (patternDataChars16Length + 1));
         j = 0;
         for(i = 0; i < patternDataLength; i += 2) {
                 patternDataChars16[j++] = (char16_t)patternDataChars[i + 1] << 8 | patternDataChars[i];
@@ -320,7 +330,7 @@ napi_value utf16IndexOfSkip(napi_env env, napi_callback_info info){
         napi_get_buffer_info(env, args[0], (void**)(&sourceDataChars), &sourceDataLength);
 
         size_t sourceDataChars16Length = sourceDataLength / 2;
-        char16_t* sourceDataChars16 = malloc(sizeof(char16_t) * (sourceDataChars16Length + 1));
+        char16_t* sourceDataChars16 = (char16_t*)malloc(sizeof(char16_t) * (sourceDataChars16Length + 1));
         size_t i,j = 0;
         for(i = 0; i < sourceDataLength; i += 2) {
                 sourceDataChars16[j++] = (char16_t)sourceDataChars[i + 1] << 8 | sourceDataChars[i];
@@ -331,7 +341,7 @@ napi_value utf16IndexOfSkip(napi_env env, napi_callback_info info){
         napi_get_buffer_info(env, args[1], (void**)(&patternDataChars), &patternDataLength);
 
         size_t patternDataChars16Length = patternDataLength / 2;
-        char16_t* patternDataChars16 = malloc(sizeof(char16_t) * (patternDataChars16Length + 1));
+        char16_t* patternDataChars16 = (char16_t*)malloc(sizeof(char16_t) * (patternDataChars16Length + 1));
         j = 0;
         for(i = 0; i < patternDataLength; i += 2) {
                 patternDataChars16[j++] = (char16_t)patternDataChars[i + 1] << 8 | patternDataChars[i];
@@ -365,7 +375,7 @@ napi_value utf16LastIndexOf(napi_env env, napi_callback_info info){
         napi_get_buffer_info(env, args[0], (void**)(&sourceDataChars), &sourceDataLength);
 
         size_t sourceDataChars16Length = sourceDataLength / 2;
-        char16_t* sourceDataChars16 = malloc(sizeof(char16_t) * (sourceDataChars16Length + 1));
+        char16_t* sourceDataChars16 = (char16_t*)malloc(sizeof(char16_t) * (sourceDataChars16Length + 1));
         size_t i,j = 0;
         for(i = 0; i < sourceDataLength; i += 2) {
                 sourceDataChars16[j++] = (char16_t)sourceDataChars[i + 1] << 8 | sourceDataChars[i];
@@ -376,7 +386,7 @@ napi_value utf16LastIndexOf(napi_env env, napi_callback_info info){
         napi_get_buffer_info(env, args[1], (void**)(&patternDataChars), &patternDataLength);
 
         size_t patternDataChars16Length = patternDataLength / 2;
-        char16_t* patternDataChars16 = malloc(sizeof(char16_t) * (patternDataChars16Length + 1));
+        char16_t* patternDataChars16 = (char16_t*)malloc(sizeof(char16_t) * (patternDataChars16Length + 1));
         j = 0;
         for(i = 0; i < patternDataLength; i += 2) {
                 patternDataChars16[j++] = (char16_t)patternDataChars[i + 1] << 8 | patternDataChars[i];
