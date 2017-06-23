@@ -41,12 +41,12 @@ describe('#lastIndexOf', function() {
     expect(result).to.equal('7,4,1');
   });
   it('should find three substrings', function() {
-    var result = fss.lastIndexOf('coocoocoocoo', 'oocoo', 1).toString();
-    expect(result).to.equal('7,4,1');
+    var result = fss.lastIndexOf('coocoocoocoo', 'oocoo', 'coocoocoocoo'.length - 7 - 'oocoo'.length + 1).toString();
+    expect(result).to.equal('4,1');
   });
   it('should find two substrings', function() {
-    var result = fss.lastIndexOf('coocoocoocoo', 'oocoo', 2).toString();
-    expect(result).to.equal('7,4');
+    var result = fss.lastIndexOf('coocoocoocoo', 'oocoo', 'coocoocoocoo'.length - 4 - 'oocoo'.length + 1).toString();
+    expect(result).to.equal('1');
   });
 });
 
@@ -87,11 +87,11 @@ describe('#utf16LastIndexOf', function() {
     expect(result).to.equal('7,4,1');
   });
   it('should find three substrings', function() {
-    var result = fss.utf16LastIndexOf(Buffer.from('coocoocoocoo', 'utf16le'), Buffer.from('oocoo', 'utf16le'), 1).toString();
-    expect(result).to.equal('7,4,1');
+    var result = fss.utf16LastIndexOf(Buffer.from('coocoocoocoo', 'utf16le'), Buffer.from('oocoo', 'utf16le'), 'coocoocoocoo'.length - 7 - 'oocoo'.length + 1).toString();
+    expect(result).to.equal('4,1');
   });
   it('should find two substrings', function() {
-    var result = fss.utf16LastIndexOf(Buffer.from('coocoocoocoo', 'utf16le'), Buffer.from('oocoo', 'utf16le'), 2).toString();
-    expect(result).to.equal('7,4');
+    var result = fss.utf16LastIndexOf(Buffer.from('coocoocoocoo', 'utf16le'), Buffer.from('oocoo', 'utf16le'), 'coocoocoocoo'.length - 4 - 'oocoo'.length + 1).toString();
+    expect(result).to.equal('1');
   });
 });

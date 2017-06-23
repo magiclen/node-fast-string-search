@@ -154,9 +154,9 @@ napi_value boyerMooreMagicLenRev(napi_env env, char16_t* source, int64_t sourceL
         char16_t specialChar = pattern[patternLength_dec];
         int64_t specialShift = badCharShiftMap[specialChar];
         badCharShiftMap[specialChar] = 0;
-        int64_t sourcePointer = sourceLength_dec - patternLength_dec;
+        int64_t sourcePointer = sourceLength_dec - patternLength_dec - offset;
         int64_t patternPointer;
-        while (sourcePointer >= offset) {
+        while (sourcePointer >= 0) {
                 patternPointer = 0;
                 while (patternPointer < patternLength) {
                         if (source[sourcePointer] != pattern[patternPointer]) {

@@ -1,6 +1,6 @@
 {
   "name": "fast-string-search",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Fast search substrings in a string by using N-API and boyer-moore-magiclen.",
   "main": "index.js",
   "scripts": {
