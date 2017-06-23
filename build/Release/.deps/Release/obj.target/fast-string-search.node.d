@@ -1,1 +1,0 @@
-cmd_Release/obj.target/fast-string-search.node := g++ -shared -pthread -rdynamic -m64  -Wl,-soname=fast-string-search.node -o Release/obj.target/fast-string-search.node -Wl,--start-group Release/obj.target/fast-string-search/src/fast-string-search.o -Wl,--end-group 
