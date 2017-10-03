@@ -61,10 +61,9 @@
     "v8_promise_internal_field_count": 1,
     "v8_random_seed": 0,
     "v8_trace_maps": 0,
-    "v8_use_snapshot": "false",
+    "v8_use_snapshot": "true",
     "want_separate_host_toolset": 0,
-    "want_separate_host_toolset_mkpeephole": 0,
-    "nodedir": "/home/magiclen/.node-gyp/8.4.0",
+    "nodedir": "/home/magiclen/.node-gyp/8.6.0",
     "standalone_static_library": 1
   }
 }

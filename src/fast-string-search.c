@@ -385,7 +385,7 @@ napi_value utf16LastIndexOf(napi_env env, napi_callback_info info){
         return result;
 }
 
-void Init (napi_env env, napi_value exports, napi_value module, void* priv) {
+napi_value Init (napi_env env, napi_value exports) {
         napi_property_descriptor allDesc[] = {
                 {"indexOf", 0, indexOf, 0, 0, 0, napi_default, 0},
                 {"indexOfSkip", 0, indexOfSkip, 0, 0, 0, napi_default, 0},
@@ -395,6 +395,7 @@ void Init (napi_env env, napi_value exports, napi_value module, void* priv) {
                 {"utf16LastIndexOf", 0, utf16LastIndexOf, 0, 0, 0, napi_default, 0}
         };
         napi_define_properties(env, exports, 6, allDesc);
+        return exports;
 }
 
 NAPI_MODULE(fss, Init);
