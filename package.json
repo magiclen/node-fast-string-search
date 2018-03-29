@@ -1,6 +1,6 @@
 {
   "name": "fast-string-search",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Fast search substrings in a string by using N-API and boyer-moore-magiclen.",
   "main": "index.js",
   "scripts": {
@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "chai": "^4.1.2",
-    "mocha": "^3.5.3",
+    "mocha": "^5.0.5",
     "mocha-logger": "^1.0.5"
   }
 }

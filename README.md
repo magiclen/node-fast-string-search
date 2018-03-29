@@ -5,8 +5,6 @@ Fast String Search
 
 This module can search substrings in a string by using N-API and boyer-moore-magiclen. The result of benchmark shows that this module is **10 times faster** than the `indexOf` function of a Node.js string.
 
-NOTICE: N-API is a new experimental feature in Node.js 8. Currently, it can be used by adding `--napi-modules` option when executing Node.js 8.
-
 ## Installation
 
 Run `npm i` or `npm install` to install.
