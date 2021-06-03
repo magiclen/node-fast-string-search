@@ -1,23 +1,9 @@
 Fast String Search
 =================================
 
-## Introduction
+[![CI](https://github.com/magiclen/node-fast-string-search/actions/workflows/ci.yml/badge.svg)](https://github.com/magiclen/node-fast-string-search/actions/workflows/ci.yml)
 
 This module can search substrings in a string by using N-API and boyer-moore-magiclen. The result of benchmark shows that this module is **10 times faster** than the `indexOf` function of a Node.js string.
-
-## Installation
-
-Run `npm i` or `npm install` to install.
-
-```bash
-npm install fast-string-search
-```
-
-If you want to save this module to package.json, please add `--save` option.
-
-```bash
-npm install fast-string-search --save
-```
 
 ## Initialization
 
