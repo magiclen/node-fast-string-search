@@ -10,7 +10,7 @@ This module can search substrings in a string by using N-API and boyer-moore-mag
 Import this module by using `require` function.
 
 ```javascript
-const fss = require('fast-string-search');
+const fss = require("fast-string-search");
 ```
 
 ## Usage
@@ -20,13 +20,13 @@ const fss = require('fast-string-search');
 Full text search in a string.
 
 ```javascript
-var a = fss.indexOf('coocoocoocoo', 'oocoo'); // [1, 4, 7]
+const a = fss.indexOf("coocoocoocoo", "oocoo"); // [1, 4, 7]
 ```
 
 You can also set the offset of characters and the number of substrings you want to find.
 
 ```javascript
-var a = fss.indexOf(source, pattern, offset, limit);
+const a = fss.indexOf(source, pattern, offset, limit);
 ```
 
 The default value of `offset` is `0`, and the default value of `limit` is `1000`.
@@ -36,7 +36,7 @@ The default value of `offset` is `0`, and the default value of `limit` is `1000`
 Normal text search in a string.
 
 ```javascript
-var a = fss.indexOfSkip('coocoocoocoo', 'oocoo'); // [1, 7]
+const a = fss.indexOfSkip("coocoocoocoo", "oocoo"); // [1, 7]
 ```
 
 ### lastIndexOf
@@ -44,13 +44,13 @@ var a = fss.indexOfSkip('coocoocoocoo', 'oocoo'); // [1, 7]
 Full text search from the end of a string.
 
 ```javascript
-var a = fss.lastIndexOf('coocoocoocoo', 'oocoo'); // [7, 4, 1]
+const a = fss.lastIndexOf("coocoocoocoo", "oocoo"); // [7, 4, 1]
 ```
 
 ### utf16IndexOf/utf16IndexOfSkip/utf16LastIndexOf
 
 ```javascript
-var a = fss.utf16IndexOf(Buffer.from('coocoocoocoo', 'utf16le'), Buffer.from('oocoo', 'utf16le')); // [1, 4, 7]
+const a = fss.utf16IndexOf(Buffer.from("coocoocoocoo", "utf16le"), Buffer.from("oocoo", "utf16le")); // [1, 4, 7]
 ```
 
 ## Tests
